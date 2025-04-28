@@ -1,11 +1,10 @@
-
 import React from 'react';
 
 function App() {
   return (
-    <div>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>Welcome to RideAway!</h1>
-      <p>Your motorcycle travel planner prototype is running.</p>
+      <p>Your motorcycle travel planner prototype is running smoothly.</p>
     </div>
   );
 }
