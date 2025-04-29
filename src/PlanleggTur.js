@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Kartvisning from './Kartvisning';
 
 function PlanleggTur() {
   const { id } = useParams();
@@ -7,6 +8,7 @@ function PlanleggTur() {
   const [start, setStart] = useState('');
   const [slutt, setSlutt] = useState('');
   const [dager, setDager] = useState('');
+  const [visKart, setVisKart] = useState(false);
 
   useEffect(() => {
     const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
@@ -16,10 +18,7 @@ function PlanleggTur() {
 
   const håndterPlanlegg = (e) => {
     e.preventDefault();
-    console.log('Start:', start);
-    console.log('Slutt:', slutt);
-    console.log('Antall dager:', dager);
-    alert(`Planlegger reiserute for ${tur?.navn || 'turen'}!`);
+    setVisKart(true);
   };
 
   if (!tur) {
@@ -35,24 +34,23 @@ function PlanleggTur() {
           placeholder="Startsted"
           value={start}
           onChange={(e) => setStart(e.target.value)}
-          style={{ marginBottom: '10px' }}
         /><br />
         <input
           type="text"
           placeholder="Endepunkt"
           value={slutt}
           onChange={(e) => setSlutt(e.target.value)}
-          style={{ marginBottom: '10px' }}
         /><br />
         <input
           type="number"
           placeholder="Antall dager"
           value={dager}
           onChange={(e) => setDager(e.target.value)}
-          style={{ marginBottom: '10px' }}
         /><br />
         <button type="submit" style={{ marginTop: '10px' }}>Planlegg reiserute</button>
       </form>
+
+      {visKart && <Kartvisning start={start} slutt={slutt} />}
     </div>
   );
 }
