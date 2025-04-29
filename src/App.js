@@ -24,21 +24,20 @@ function App() {
   };
 
   const lagreTur = () => {
-    const oppdatertTurer = [...turer, nyTur];
+    const id = Date.now().toString(); // unik ID basert på timestamp
+    const ny = { ...nyTur, id };
+    const oppdatertTurer = [...turer, ny];
     setTurer(oppdatertTurer);
     localStorage.setItem('turer', JSON.stringify(oppdatertTurer));
-
-    const nyTurId = oppdatertTurer.length - 1;
     setNyTur({ navn: '', startdato: '', sluttdato: '', beskrivelse: '' });
     setVisSkjema(false);
-
-    navigate(`/tur/${nyTurId}`);
+    navigate(`/tur/${id}`);
   };
 
-  const slettTur = (index) => {
+  const slettTur = (id) => {
     const bekreft = window.confirm('Er du sikker på at du vil slette denne turen?');
     if (bekreft) {
-      const oppdatertTurer = turer.filter((_, i) => i !== index);
+      const oppdatertTurer = turer.filter((tur) => tur.id !== id);
       setTurer(oppdatertTurer);
       localStorage.setItem('turer', JSON.stringify(oppdatertTurer));
     }
@@ -89,16 +88,16 @@ function App() {
         <p>Du har ingen planlagte turer ennå.</p>
       ) : (
         <ul style={{ listStyle: 'none', padding: 0 }}>
-          {turer.map((tur, index) => (
-            <li key={index} style={{ marginBottom: '15px' }}>
-              <a href={`/tur/${index}`} style={{ textDecoration: 'none', color: 'blue' }}>
+          {turer.map((tur) => (
+            <li key={tur.id} style={{ marginBottom: '15px' }}>
+              <a href={`/tur/${tur.id}`} style={{ textDecoration: 'none', color: 'blue' }}>
                 <strong>{tur.navn}</strong><br/>
                 {tur.startdato} - {tur.sluttdato}
               </a>
               <br/>
               <em>{tur.beskrivelse}</em>
               <br/>
-              <button onClick={() => slettTur(index)} style={{ marginTop: '5px', color: 'red' }}>
+              <button onClick={() => slettTur(tur.id)} style={{ marginTop: '5px', color: 'red' }}>
                 🗑️ Slett
               </button>
             </li>
