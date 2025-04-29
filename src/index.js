@@ -12,7 +12,7 @@ root.render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/tur/:id" element={<TurDetaljer />} />
-        <Route path="/planlegg" element={<PlanleggTur />} />
+        <Route path="/planlegg/:id" element={<PlanleggTur />} />
       </Routes>
     </Router>
   </React.StrictMode>
