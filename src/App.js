@@ -35,6 +35,15 @@ function App() {
     navigate(`/tur/${nyTurId}`);
   };
 
+  const slettTur = (index) => {
+    const bekreft = window.confirm('Er du sikker på at du vil slette denne turen?');
+    if (bekreft) {
+      const oppdatertTurer = turer.filter((_, i) => i !== index);
+      setTurer(oppdatertTurer);
+      localStorage.setItem('turer', JSON.stringify(oppdatertTurer));
+    }
+  };
+
   return (
     <div style={{ textAlign: 'center', marginTop: '30px' }}>
       <h1>RideAway</h1>
@@ -88,6 +97,10 @@ function App() {
               </a>
               <br/>
               <em>{tur.beskrivelse}</em>
+              <br/>
+              <button onClick={() => slettTur(index)} style={{ marginTop: '5px', color: 'red' }}>
+                🗑️ Slett
+              </button>
             </li>
           ))}
         </ul>
