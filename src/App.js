@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
   const [turer, setTurer] = useState([]);
@@ -9,6 +10,8 @@ function App() {
     sluttdato: '',
     beskrivelse: ''
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
@@ -24,8 +27,12 @@ function App() {
     const oppdatertTurer = [...turer, nyTur];
     setTurer(oppdatertTurer);
     localStorage.setItem('turer', JSON.stringify(oppdatertTurer));
+
+    const nyTurId = oppdatertTurer.length - 1;
     setNyTur({ navn: '', startdato: '', sluttdato: '', beskrivelse: '' });
     setVisSkjema(false);
+
+    navigate(`/tur/${nyTurId}`);
   };
 
   return (
@@ -75,8 +82,11 @@ function App() {
         <ul style={{ listStyle: 'none', padding: 0 }}>
           {turer.map((tur, index) => (
             <li key={index} style={{ marginBottom: '15px' }}>
-              <strong>{tur.navn}</strong><br/>
-              {tur.startdato} - {tur.sluttdato}<br/>
+              <a href={`/tur/${index}`} style={{ textDecoration: 'none', color: 'blue' }}>
+                <strong>{tur.navn}</strong><br/>
+                {tur.startdato} - {tur.sluttdato}
+              </a>
+              <br/>
               <em>{tur.beskrivelse}</em>
             </li>
           ))}
