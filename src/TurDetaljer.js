@@ -7,11 +7,12 @@ function TurDetaljer() {
 
   useEffect(() => {
     const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
-    setTur(lagredeTurer[id]);
+    const funnetTur = lagredeTurer.find((t) => t.id === id);
+    setTur(funnetTur);
   }, [id]);
 
   if (!tur) {
-    return <p>Laster turdetaljer...</p>;
+    return <p style={{ textAlign: 'center', marginTop: '30px' }}>Turen ble ikke funnet.</p>;
   }
 
   return (
