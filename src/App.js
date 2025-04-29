@@ -82,11 +82,6 @@ function App() {
           <button onClick={lagreTur}>Lagre tur</button>
         </div>
       )}
-<div>
-  <a href="/planlegg">
-    <button style={{ marginBottom: '20px' }}>🛣️ Planlegg ny tur</button>
-  </a>
-</div>
       <h2>Dine turer</h2>
       {turer.length === 0 ? (
         <p>Du har ingen planlagte turer ennå.</p>
