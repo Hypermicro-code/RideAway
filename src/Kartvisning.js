@@ -79,13 +79,6 @@ function Kartvisning({ start, slutt, dager }) {
       )}
 
       {visLagre && (
-        <div style={{ marginTop: '20px' }}>
-          <button onClick={lagreRute}>💾 Lagre reiserute</button>
-          <br />
-          <button style={{ marginTop: '10px' }} onClick={() => navigate(`/tur/${id}`)}>
-            ⬅️ Tilbake til turdetaljer
-          </button>
-        </div>
       )}
     </div>
   );
