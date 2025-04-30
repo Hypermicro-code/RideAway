@@ -50,7 +50,7 @@ function PlanleggTur() {
         <button type="submit" style={{ marginTop: '10px' }}>Planlegg reiserute</button>
       </form>
 
-      {visKart && <Kartvisning start={start} slutt={slutt} />}
+      {visKart && <Kartvisning start={start} slutt={slutt} dager={parseInt(dager)} />}
     </div>
   );
 }
