@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-function Kartvisning({ start, slutt }) {
+function Kartvisning({ start, slutt, dager }) {
   const kartRef = useRef(null);
+  const [dagsetapper, setDagsetapper] = useState(null);
 
   useEffect(() => {
-    if (!window.google || !start || !slutt) return;
+    if (!window.google || !start || !slutt || !dager) return;
 
     const directionsService = new window.google.maps.DirectionsService();
     const directionsRenderer = new window.google.maps.DirectionsRenderer();
@@ -25,14 +26,38 @@ function Kartvisning({ start, slutt }) {
       (response, status) => {
         if (status === 'OK') {
           directionsRenderer.setDirections(response);
+
+          const totalSekunder = response.routes[0].legs.reduce((sum, leg) => sum + leg.duration.value, 0);
+          const timerTotal = totalSekunder / 3600;
+          const timerPerDag = timerTotal / dager;
+
+          const forslag = Array.from({ length: dager }, (_, i) =>
+            `Dag ${i + 1}: Kjør ca. ${timerPerDag.toFixed(1)} timer`
+          );
+
+          setDagsetapper(forslag);
         } else {
           alert('Fant ikke rute: ' + status);
         }
       }
     );
-  }, [start, slutt]);
+  }, [start, slutt, dager]);
 
-  return <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />;
+  return (
+    <div>
+      <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
+      {dagsetapper && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>Foreslåtte dagsetapper:</h3>
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {dagsetapper.map((dag, idx) => (
+              <li key={idx}>{dag}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Kartvisning;
