@@ -77,12 +77,14 @@ if (slutt < start) {
           onChange={(e) => setStartdato(e.target.value)}
           required
         /><br />
-        <input
+       <input
           type="date"
-          placeholder="Sluttdato" // 🏷️ i18n
+          placeholder="Sluttdato"
           value={sluttdato}
           onChange={(e) => setSluttdato(e.target.value)}
           required
+           min={startdato} // 🆕 dette låser kalenderen
+/>
         /><br />
         <textarea
           placeholder="Beskrivelse (valgfritt)" // 🏷️ i18n
