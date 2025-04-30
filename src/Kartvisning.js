@@ -1,25 +1,36 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function Kartvisning({ start, slutt, dager }) {
   const kartRef = useRef(null);
   const [dagsetapper, setDagsetapper] = useState(null);
   const [visLagre, setVisLagre] = useState(false);
+  const [kart, setKart] = useState(null);
+  const [directionsRenderer, setDirectionsRenderer] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    if (!window.google || !start || !slutt || !dager) return;
-
-    const directionsService = new window.google.maps.DirectionsService();
-    const directionsRenderer = new window.google.maps.DirectionsRenderer();
-
-    const kart = new window.google.maps.Map(kartRef.current, {
+  const initialiserKart = () => {
+    const nyttKart = new window.google.maps.Map(kartRef.current, {
       zoom: 6,
       center: { lat: 60.472, lng: 8.4689 },
     });
 
-    directionsRenderer.setMap(kart);
+    const renderer = new window.google.maps.DirectionsRenderer();
+    renderer.setMap(nyttKart);
+
+    setKart(nyttKart);
+    setDirectionsRenderer(renderer);
+  };
+
+  const oppdaterRute = () => {
+    if (!window.google || !start || !slutt || !dager) return;
+
+    if (!kart || !directionsRenderer) {
+      initialiserKart();
+    }
+
+    const directionsService = new window.google.maps.DirectionsService();
 
     directionsService.route(
       {
@@ -42,11 +53,11 @@ function Kartvisning({ start, slutt, dager }) {
           setDagsetapper(forslag);
           setVisLagre(true);
         } else {
-          alert('Fant ikke rute: ' + status);
+          alert('Fant ikke rute: ' + status); // 🏷️ i18n
         }
       }
     );
-  }, [start, slutt, dager]);
+  };
 
   const lagreRute = () => {
     const turer = JSON.parse(localStorage.getItem('turer')) || [];
@@ -59,7 +70,7 @@ function Kartvisning({ start, slutt, dager }) {
         dagsetapper,
       };
       localStorage.setItem('turer', JSON.stringify(turer));
-      alert('Reiseruten ble lagret!');
+      alert('Reiseruten ble lagret!'); // 🏷️ i18n
     }
   };
 
@@ -67,19 +78,24 @@ function Kartvisning({ start, slutt, dager }) {
     <div>
       <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
 
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={oppdaterRute}>🔄 Oppdater reiserute</button> {/* 🏷️ i18n */}
+      </div>
+
       {dagsetapper && (
         <div style={{ marginTop: '20px' }}>
-          <h3>Foreslåtte dagsetapper:</h3>
+          <h3>Foreslåtte dagsetapper:</h3> {/* 🏷️ i18n */}
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {dagsetapper.map((dag, idx) => (
               <li key={idx}>{dag}</li>
             ))}
           </ul>
-{visLagre && (
-  <div style={{ marginTop: '20px' }}>
-    <button onClick={lagreRute}>💾 Lagre reiserute</button>
-  </div>
-)}
+        </div>
+      )}
+
+      {visLagre && (
+        <div style={{ marginTop: '20px' }}>
+          <button onClick={lagreRute}>💾 Lagre reiserute</button> {/* 🏷️ i18n */}
         </div>
       )}
     </div>
