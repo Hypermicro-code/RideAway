@@ -19,10 +19,13 @@ function App() {
   const håndterNyTur = (e) => {
     e.preventDefault();
 
-    if (new Date(sluttdato) < new Date(startdato)) {
-      alert('Sluttdato kan ikke være før startdato.'); // 🏷️ i18n
-      return;
-    }
+    const start = new Date(startdato);
+const slutt = new Date(sluttdato);
+
+if (slutt < start) {
+  alert('Sluttdato kan ikke være før startdato.'); // 🏷️ i18n
+  return;
+}
 
     const id = Date.now().toString();
     const dager =
