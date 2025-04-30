@@ -75,6 +75,11 @@ function Kartvisning({ start, slutt, dager }) {
               <li key={idx}>{dag}</li>
             ))}
           </ul>
+{visLagre && (
+  <div style={{ marginTop: '20px' }}>
+    <button onClick={lagreRute}>💾 Lagre reiserute</button>
+  </div>
+)}
         </div>
       )}
     </div>
