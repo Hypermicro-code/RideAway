@@ -21,15 +21,15 @@ function TurDetaljer() {
       <p>{tur.startdato} – {tur.sluttdato}</p>
       <p><em>{tur.beskrivelse}</em></p>
 
-      {tur.reiserute ? (
-        <Link to={`/planlegg/${tur.id}`}>
-          <button style={{ marginTop: '20px' }}>📄 Åpne reiserute</button>
-        </Link>
-      ) : (
-        <Link to={`/planlegg/${tur.id}`}>
-          <button style={{ marginTop: '20px' }}>➕ Opprett reiserute</button>
-        </Link>
-      )}
+     {tur.reiserute ? (
+  <Link to={`/planlegg/${tur.id}`}>
+    <button>📍 Vis reiserute</button> {/* 🏷️ i18n */}
+  </Link>
+) : (
+  <Link to={`/planlegg/${tur.id}`}>
+    <button>➕ Opprett reiserute</button> {/* 🏷️ i18n */}
+  </Link>
+)}
 
       <br />
       <Link to="/">
