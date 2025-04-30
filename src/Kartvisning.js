@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function Kartvisning({ start, slutt, dager }) {
@@ -10,7 +10,9 @@ function Kartvisning({ start, slutt, dager }) {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const initialiserKart = () => {
+  useEffect(() => {
+    if (!window.google || !start || !slutt || !dager) return;
+
     const nyttKart = new window.google.maps.Map(kartRef.current, {
       zoom: 6,
       center: { lat: 60.472, lng: 8.4689 },
@@ -21,13 +23,13 @@ function Kartvisning({ start, slutt, dager }) {
 
     setKart(nyttKart);
     setDirectionsRenderer(renderer);
-  };
+  }, [start, slutt, dager]);
 
   const oppdaterRute = () => {
-    if (!window.google || !start || !slutt || !dager) return;
-
-    if (!kart || !directionsRenderer) {
-      initialiserKart();
+    const dagerInt = parseInt(dager);
+    if (!start || !slutt || isNaN(dagerInt)) {
+      alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.'); // 🏷️ i18n
+      return;
     }
 
     const directionsService = new window.google.maps.DirectionsService();
@@ -44,9 +46,9 @@ function Kartvisning({ start, slutt, dager }) {
 
           const totalSekunder = response.routes[0].legs.reduce((sum, leg) => sum + leg.duration.value, 0);
           const timerTotal = totalSekunder / 3600;
-          const timerPerDag = timerTotal / dager;
+          const timerPerDag = timerTotal / dagerInt;
 
-          const forslag = Array.from({ length: dager }, (_, i) =>
+          const forslag = Array.from({ length: dagerInt }, (_, i) =>
             `Dag ${i + 1}: Kjør ca. ${timerPerDag.toFixed(1)} timer`
           );
 
