@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function Kartvisning({ start, slutt, dager }) {
   const kartRef = useRef(null);
   const [dagsetapper, setDagsetapper] = useState(null);
+  const [visLagre, setVisLagre] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
 
   useEffect(() => {
     if (!window.google || !start || !slutt || !dager) return;
@@ -12,7 +16,7 @@ function Kartvisning({ start, slutt, dager }) {
 
     const kart = new window.google.maps.Map(kartRef.current, {
       zoom: 6,
-      center: { lat: 60.472, lng: 8.4689 }, // Midt i Norge
+      center: { lat: 60.472, lng: 8.4689 },
     });
 
     directionsRenderer.setMap(kart);
@@ -36,6 +40,7 @@ function Kartvisning({ start, slutt, dager }) {
           );
 
           setDagsetapper(forslag);
+          setVisLagre(true);
         } else {
           alert('Fant ikke rute: ' + status);
         }
@@ -43,9 +48,25 @@ function Kartvisning({ start, slutt, dager }) {
     );
   }, [start, slutt, dager]);
 
+  const lagreRute = () => {
+    const turer = JSON.parse(localStorage.getItem('turer')) || [];
+    const index = turer.findIndex((t) => t.id === id);
+    if (index !== -1) {
+      turer[index].reiserute = {
+        start,
+        slutt,
+        dager,
+        dagsetapper,
+      };
+      localStorage.setItem('turer', JSON.stringify(turer));
+      alert('Reiseruten ble lagret!');
+    }
+  };
+
   return (
     <div>
       <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
+
       {dagsetapper && (
         <div style={{ marginTop: '20px' }}>
           <h3>Foreslåtte dagsetapper:</h3>
@@ -54,6 +75,16 @@ function Kartvisning({ start, slutt, dager }) {
               <li key={idx}>{dag}</li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {visLagre && (
+        <div style={{ marginTop: '20px' }}>
+          <button onClick={lagreRute}>💾 Lagre reiserute</button>
+          <br />
+          <button style={{ marginTop: '10px' }} onClick={() => navigate(`/tur/${id}`)}>
+            ⬅️ Tilbake til turdetaljer
+          </button>
         </div>
       )}
     </div>
