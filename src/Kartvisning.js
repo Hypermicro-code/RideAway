@@ -77,9 +77,6 @@ function Kartvisning({ start, slutt, dager }) {
           </ul>
         </div>
       )}
-
-      {visLagre && (
-      )}
     </div>
   );
 }
