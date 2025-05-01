@@ -10,6 +10,7 @@ function App() {
   const [beskrivelse, setBeskrivelse] = useState('');
   const [startsted, setStartsted] = useState('');
   const [sluttsted, setSluttsted] = useState('');
+  const [turRetur, setTurRetur] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,6 +32,8 @@ function App() {
     const id = Date.now().toString();
     const dager = (slutt - start) / (1000 * 60 * 60 * 24) + 1;
 
+    const stoppListe = turRetur ? [startsted] : [];
+
     const nyTur = {
       id,
       navn,
@@ -41,6 +44,8 @@ function App() {
         start: startsted,
         slutt: sluttsted,
         dager: Math.round(dager),
+        stopp: stoppListe,
+        turRetur: turRetur,
       },
     };
 
@@ -124,6 +129,14 @@ function App() {
                 onChange={(e) => setSluttsted(e.target.value)}
                 required
               /><br />
+              <label style={{ display: 'block', marginTop: '10px' }}>
+              <input
+               type="checkbox"
+               checked={turRetur}
+               onChange={(e) => setTurRetur(e.target.checked)}
+               />{' '}
+                Planlegg som tur/retur {/* 🏷️ i18n */}
+             </label>
               <button type="submit" style={{ marginTop: '10px' }}>
                 🚀 Opprett tur
               </button>
