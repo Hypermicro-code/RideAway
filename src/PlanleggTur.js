@@ -71,7 +71,14 @@ function PlanleggTur() {
         </div>
       )}
 
-      {visKart && <Kartvisning start={start} slutt={slutt} dager={parseInt(dager)} />}
+      {visKart && (
+  <Kartvisning
+    start={start}
+    slutt={slutt}
+    dager={parseInt(dager)}
+    stopp={tur.reiserute?.stopp || []} // 🆕
+  />
+)}
 
       <div style={{ marginTop: '20px' }}>
         <button onClick={() => navigate('/')}>⬅️ Tilbake til forsiden</button> {/* 🏷️ i18n */}
