@@ -11,12 +11,16 @@ function PlanleggTur() {
   const [dager, setDager] = useState('');
   const [visKart, setVisKart] = useState(false);
   const [redigerer, setRedigerer] = useState(false);
-  const [turRetur, setTurRetur] = useState(tur.reiserute?.turRetur || false);
+  const [turRetur, setTurRetur] = useState(false);
 
 useEffect(() => {
   const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
   const funnetTur = lagredeTurer.find((t) => t.id === id);
   setTur(funnetTur);
+
+  if (funnetTur?.reiserute?.turRetur) {
+  setTurRetur(true);
+}
 
   if (funnetTur?.reiserute && !redigerer) {
     setStart(funnetTur.reiserute.start);
