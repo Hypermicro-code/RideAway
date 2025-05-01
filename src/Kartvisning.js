@@ -12,20 +12,23 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp }){
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    if (!window.google || !start || !slutt || !dager) return;
+useEffect(() => {
+  if (!window.google || !start || !slutt || !dager) return;
 
-    const nyttKart = new window.google.maps.Map(kartRef.current, {
-      zoom: 6,
-      center: { lat: 60.472, lng: 8.4689 },
-    });
+  console.log("🗺️ Initialiserer kartet...");
 
-    const renderer = new window.google.maps.DirectionsRenderer();
-    renderer.setMap(nyttKart);
+  const nyttKart = new window.google.maps.Map(kartRef.current, {
+    zoom: 6,
+    center: { lat: 60.472, lng: 8.4689 },
+  });
 
-    setKart(nyttKart);
-    setDirectionsRenderer(renderer);
-  }, [start, slutt, dager]);
+  const renderer = new window.google.maps.DirectionsRenderer();
+  renderer.setMap(nyttKart);
+
+  setKart(nyttKart);
+  setDirectionsRenderer(renderer);
+}, [start, slutt, dager]);
+
 
   // 🚀 Automatisk kjør rute når kart og renderer er klar
   useEffect(() => {
@@ -150,5 +153,10 @@ if (!start || !slutt || !dager) {
     </div>
   );
 }
-
+console.log("📦 Kartkomponent lastet. Data:", {
+  start,
+  slutt,
+  dager,
+  stoppListe
+});
 export default Kartvisning;
