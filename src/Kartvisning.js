@@ -98,6 +98,9 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp }){
       setStopp('');
     }
   };
+if (!start || !slutt || !dager) {
+  return <p>Mangler data for å vise kart.</p>;
+}
 
   return (
     <div>
