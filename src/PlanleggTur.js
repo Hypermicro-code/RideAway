@@ -9,6 +9,7 @@ function PlanleggTur() {
   const [start, setStart] = useState('');
   const [slutt, setSlutt] = useState('');
   const [dager, setDager] = useState('');
+  const [stoppListe, setStoppListe] = useState(tur?.reiserute?.stopp || []);
   const [visKart, setVisKart] = useState(false);
   const [redigerer, setRedigerer] = useState(false);
   const [turRetur, setTurRetur] = useState(false);
