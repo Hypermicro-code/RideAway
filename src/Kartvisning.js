@@ -27,10 +27,17 @@ function Kartvisning({ start, slutt, dager }) {
     setDirectionsRenderer(renderer);
   }, [start, slutt, dager]);
 
+  // 🚀 Automatisk kjør rute når kart og renderer er klar
+  useEffect(() => {
+    if (kart && directionsRenderer) {
+      oppdaterRute();
+    }
+  }, [kart, directionsRenderer]);
+
   const oppdaterRute = () => {
     const dagerInt = parseInt(dager);
     if (!start || !slutt || isNaN(dagerInt)) {
-      alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.'); // 🏷️ i18n
+      alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.');
       return;
     }
 
@@ -63,7 +70,7 @@ function Kartvisning({ start, slutt, dager }) {
           setDagsetapper(forslag);
           setVisLagre(true);
         } else {
-          alert('Fant ikke rute: ' + status); // 🏷️ i18n
+          alert('Fant ikke rute: ' + status);
         }
       }
     );
@@ -81,7 +88,7 @@ function Kartvisning({ start, slutt, dager }) {
         dagsetapper,
       };
       localStorage.setItem('turer', JSON.stringify(turer));
-      alert('Reiseruten ble lagret!'); // 🏷️ i18n
+      alert('Reiseruten ble lagret!');
     }
   };
 
@@ -99,16 +106,16 @@ function Kartvisning({ start, slutt, dager }) {
       <div style={{ marginTop: '20px' }}>
         <input
           type="text"
-          placeholder="Legg til mellomstopp" // 🏷️ i18n
+          placeholder="Legg til mellomstopp"
           value={stopp}
           onChange={(e) => setStopp(e.target.value)}
         />
-        <button onClick={leggTilStopp}>➕ Legg til stopp</button> {/* 🏷️ i18n */}
+        <button onClick={leggTilStopp}>➕ Legg til stopp</button>
       </div>
 
       {stoppListe.length > 0 && (
         <div style={{ marginTop: '10px' }}>
-          <h4>Mellomstopp:</h4> {/* 🏷️ i18n */}
+          <h4>Mellomstopp:</h4>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {stoppListe.map((sted, idx) => (
               <li key={idx}>📍 {sted}</li>
@@ -118,12 +125,12 @@ function Kartvisning({ start, slutt, dager }) {
       )}
 
       <div style={{ marginTop: '20px' }}>
-        <button onClick={oppdaterRute}>🔄 Oppdater reiserute</button> {/* 🏷️ i18n */}
+        <button onClick={oppdaterRute}>🔄 Oppdater reiserute</button>
       </div>
 
       {dagsetapper && (
         <div style={{ marginTop: '20px' }}>
-          <h3>Foreslåtte dagsetapper:</h3> {/* 🏷️ i18n */}
+          <h3>Foreslåtte dagsetapper:</h3>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {dagsetapper.map((dag, idx) => (
               <li key={idx}>{dag}</li>
@@ -134,7 +141,7 @@ function Kartvisning({ start, slutt, dager }) {
 
       {visLagre && (
         <div style={{ marginTop: '20px' }}>
-          <button onClick={lagreRute}>💾 Lagre reiserute</button> {/* 🏷️ i18n */}
+          <button onClick={lagreRute}>💾 Lagre reiserute</button>
         </div>
       )}
     </div>
@@ -142,4 +149,3 @@ function Kartvisning({ start, slutt, dager }) {
 }
 
 export default Kartvisning;
-
