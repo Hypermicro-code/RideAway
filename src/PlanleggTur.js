@@ -78,8 +78,7 @@ useEffect(() => {
         </form>
       ) : (
         <div style={{ marginTop: '20px' }}>
-          <button onClick={() => setRedigerer(true)}>✏️ Rediger reiserute</button> {/* 🏷️ i18n */}
-        </div>
+          <button onClick={() => setRedigerer(true)}>✏️ Rediger reiserute</button> {/* 🏷️ i18n */}        
 <label style={{ display: 'block', marginTop: '10px' }}>
   <input
     type="checkbox"
@@ -88,6 +87,7 @@ useEffect(() => {
   />{' '}
   Planlegg som tur/retur {/* 🏷️ i18n */}
 </label>
+  </div>
       )}
 
       {visKart && (
