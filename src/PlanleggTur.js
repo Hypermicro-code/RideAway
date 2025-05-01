@@ -11,18 +11,31 @@ function PlanleggTur() {
   const [dager, setDager] = useState('');
   const [visKart, setVisKart] = useState(false);
   const [redigerer, setRedigerer] = useState(false);
+  const [turRetur, setTurRetur] = useState(tur.reiserute?.turRetur || false);
 
-  useEffect(() => {
-    const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
-    const funnetTur = lagredeTurer.find((t) => t.id === id);
-    setTur(funnetTur);
+useEffect(() => {
+  const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
+  const funnetTur = lagredeTurer.find((t) => t.id === id);
+  setTur(funnetTur);
 
-    if (funnetTur?.reiserute && !redigerer) {
-      setStart(funnetTur.reiserute.start);
-      setSlutt(funnetTur.reiserute.slutt);
-      setDager(funnetTur.reiserute.dager);
-      setVisKart(true);
+  if (funnetTur?.reiserute && !redigerer) {
+    setStart(funnetTur.reiserute.start);
+    setSlutt(funnetTur.reiserute.slutt);
+    setDager(funnetTur.reiserute.dager);
+    setVisKart(true);
+  }
+}, []);
+
+useEffect(() => {
+  if (turRetur) {
+    if (!stoppListe.includes(tur.reiserute.start)) {
+      setStoppListe([...stoppListe, tur.reiserute.start]);
     }
+  } else {
+    setStoppListe(stoppListe.filter((s) => s !== tur.reiserute.start));
+  }
+}, [turRetur]);
+
   }, [id, redigerer]);
 
   const håndterPlanlegg = (e) => {
@@ -69,6 +82,14 @@ function PlanleggTur() {
         <div style={{ marginTop: '20px' }}>
           <button onClick={() => setRedigerer(true)}>✏️ Rediger reiserute</button> {/* 🏷️ i18n */}
         </div>
+<label style={{ display: 'block', marginTop: '10px' }}>
+  <input
+    type="checkbox"
+    checked={turRetur}
+    onChange={(e) => setTurRetur(e.target.checked)}
+  />{' '}
+  Planlegg som tur/retur {/* 🏷️ i18n */}
+</label>
       )}
 
       {visKart && (
