@@ -7,6 +7,8 @@ function Kartvisning({ start, slutt, dager }) {
   const [visLagre, setVisLagre] = useState(false);
   const [kart, setKart] = useState(null);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
+  const [stopp, setStopp] = useState('');
+  const [stoppListe, setStoppListe] = useState([]);
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -34,10 +36,16 @@ function Kartvisning({ start, slutt, dager }) {
 
     const directionsService = new window.google.maps.DirectionsService();
 
+    const waypoints = stoppListe.map((sted) => ({
+      location: sted,
+      stopover: true,
+    }));
+
     directionsService.route(
       {
         origin: start,
         destination: slutt,
+        waypoints: waypoints,
         travelMode: window.google.maps.TravelMode.DRIVING,
       },
       (response, status) => {
@@ -69,6 +77,7 @@ function Kartvisning({ start, slutt, dager }) {
         start,
         slutt,
         dager,
+        stopp: stoppListe,
         dagsetapper,
       };
       localStorage.setItem('turer', JSON.stringify(turer));
@@ -76,9 +85,37 @@ function Kartvisning({ start, slutt, dager }) {
     }
   };
 
+  const leggTilStopp = () => {
+    if (stopp.trim() !== '') {
+      setStoppListe([...stoppListe, stopp]);
+      setStopp('');
+    }
+  };
+
   return (
     <div>
       <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
+
+      <div style={{ marginTop: '20px' }}>
+        <input
+          type="text"
+          placeholder="Legg til mellomstopp" // 🏷️ i18n
+          value={stopp}
+          onChange={(e) => setStopp(e.target.value)}
+        />
+        <button onClick={leggTilStopp}>➕ Legg til stopp</button> {/* 🏷️ i18n */}
+      </div>
+
+      {stoppListe.length > 0 && (
+        <div style={{ marginTop: '10px' }}>
+          <h4>Mellomstopp:</h4> {/* 🏷️ i18n */}
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {stoppListe.map((sted, idx) => (
+              <li key={idx}>📍 {sted}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div style={{ marginTop: '20px' }}>
         <button onClick={oppdaterRute}>🔄 Oppdater reiserute</button> {/* 🏷️ i18n */}
@@ -105,3 +142,4 @@ function Kartvisning({ start, slutt, dager }) {
 }
 
 export default Kartvisning;
+
