@@ -36,8 +36,6 @@ useEffect(() => {
   }
 }, [turRetur]);
 
-  }, [id, redigerer]);
-
   const håndterPlanlegg = (e) => {
     e.preventDefault();
     setVisKart(true);
