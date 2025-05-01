@@ -1,14 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-function Kartvisning({ start, slutt, dager }) {
+function Kartvisning({ start, slutt, dager, stopp }) {
   const kartRef = useRef(null);
   const [dagsetapper, setDagsetapper] = useState(null);
   const [visLagre, setVisLagre] = useState(false);
   const [kart, setKart] = useState(null);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
   const [stopp, setStopp] = useState('');
-  const [stoppListe, setStoppListe] = useState([]);
+  const [stoppListe, setStoppListe] = useState(stopp || []);
   const navigate = useNavigate();
   const { id } = useParams();
 
