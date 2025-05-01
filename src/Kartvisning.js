@@ -2,12 +2,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function Kartvisning({ start, slutt, dager, stopp: initialStopp }){
-  console.log("📦 Kartkomponent lastet. Data:", {
-  start,
-  slutt,
-  dager,
-  stoppListe
-});
   const kartRef = useRef(null);
   const [dagsetapper, setDagsetapper] = useState(null);
   const [visLagre, setVisLagre] = useState(false);
@@ -17,6 +11,13 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp }){
   const [stoppListe, setStoppListe] = useState(initialStopp || []);
   const navigate = useNavigate();
   const { id } = useParams();
+
+   console.log("📦 Kartkomponent lastet. Data:", {
+  start,
+  slutt,
+  dager,
+  stoppListe
+});
 
 useEffect(() => {
   if (!window.google || !start || !slutt || !dager) return;
