@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Kartvisning from './Kartvisning';
+import Kartvisning from './Kartvisning'; //
 
 function PlanleggTur() {
   const { id } = useParams();
