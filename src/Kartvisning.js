@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-function Kartvisning({ start, slutt, dager, stopp: initialStopp })
+function Kartvisning({ start, slutt, dager, stopp: initialStopp }){
   const [kartRef] = useRef(null);
   const [dagsetapper, setDagsetapper] = useState(null);
   const [visLagre, setVisLagre] = useState(false);
