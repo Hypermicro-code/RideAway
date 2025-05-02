@@ -157,9 +157,10 @@ const oppdaterRute = () => {
     if (stopp.trim() !== '') {
       setStoppListe([...stoppListe, stopp]);
       setStopp('');
+      return (
     }
   };
-  return (
+  
     <div>
       <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
 
