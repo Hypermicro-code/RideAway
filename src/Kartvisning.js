@@ -44,12 +44,59 @@ useEffect(() => {
     }
   }, [kart, directionsRenderer]);
 
-  const oppdaterRute = () => {
-    const dagerInt = parseInt(dager);
-    if (!start || !slutt || isNaN(dagerInt)) {
-      alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.');
-      return;
+const oppdaterRute = () => {
+  const dagerInt = parseInt(dager);
+  if (!start || !slutt || isNaN(dagerInt)) {
+    alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.');
+    return;
+  }
+
+  const directionsService = new window.google.maps.DirectionsService();
+
+  // Hvis tur/retur er aktivt, legg til slutt og deretter start som siste stopp
+  const reellStoppListe = [...stoppListe];
+
+  if (turRetur) {
+    if (!reellStoppListe.includes(slutt)) reellStoppListe.push(slutt);
+    if (!reellStoppListe.includes(start)) reellStoppListe.push(start);
+  }
+
+  const waypoints = reellStoppListe.map((sted) => ({
+    location: sted,
+    stopover: true,
+  }));
+
+  directionsService.route(
+    {
+      origin: start,
+      destination: turRetur ? start : slutt,
+      waypoints: waypoints,
+      travelMode: window.google.maps.TravelMode.DRIVING,
+    },
+    (response, status) => {
+      if (status === 'OK') {
+        directionsRenderer.setDirections(response);
+
+        const totalSekunder = response.routes[0].legs.reduce(
+          (sum, leg) => sum + leg.duration.value,
+          0
+        );
+        const timerTotal = totalSekunder / 3600;
+        const timerPerDag = timerTotal / dagerInt;
+
+        const forslag = Array.from({ length: dagerInt }, (_, i) =>
+          `Dag ${i + 1}: Kjør ca. ${timerPerDag.toFixed(1)} timer`
+        );
+
+        setDagsetapper(forslag);
+        setVisLagre(true);
+      } else {
+        alert('Fant ikke rute: ' + status);
+      }
     }
+  );
+};
+
 
     const directionsService = new window.google.maps.DirectionsService();
 
