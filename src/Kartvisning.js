@@ -158,7 +158,6 @@ const oppdaterRute = () => {
 if (!start || !slutt || !dager) {
   return <p>Mangler data for å vise kart.</p>;
 }
-
   return (
     <div>
       <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
