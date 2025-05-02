@@ -5,7 +5,6 @@ import RedigerbareStopp from './RedigerbareStopp';
 function Kartvisning({ stopp: initialStopp, dager }) {
   const kartRef = useRef(null);
   const { id } = useParams();
-
   const [stoppListe, setStoppListe] = useState(initialStopp || []);
   const [nyStopp, setNyStopp] = useState('');
   const [dagsetapper, setDagsetapper] = useState(null);
@@ -13,37 +12,8 @@ function Kartvisning({ stopp: initialStopp, dager }) {
   const [kart, setKart] = useState(null);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
 
-  // 📦 Debug-logg
   useEffect(() => {
-    console.log("📦 Kartvisning initialisert med:", { initialStopp, dager });
-  }, []);
-
-  // 🗺️ Opprett kart
- useEffect(() => {
-  if (!window.google) {
-    console.warn("❌ Google Maps er ikke klar enda.");
-    return;
-  }
-
-  if (!Array.isArray(stoppListe) || stoppListe.length < 2) {
-    console.warn("❌ Ikke nok stopp til å vise kart:", stoppListe);
-    return;
-  }
-
-  console.log("✅ Kartet initialiseres med stopp:", stoppListe);
-
-  const nyttKart = new window.google.maps.Map(kartRef.current, {
-    zoom: 6,
-    center: { lat: 60.472, lng: 8.4689 },
-  });
-
-  const renderer = new window.google.maps.DirectionsRenderer();
-  renderer.setMap(nyttKart);
-
-  setKart(nyttKart);
-  setDirectionsRenderer(renderer);
-}, [stoppListe]);
-
+    if (!window.google || stoppListe.length < 2) return;
 
     const nyttKart = new window.google.maps.Map(kartRef.current, {
       zoom: 6,
