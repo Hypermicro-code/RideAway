@@ -1,19 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import RedigerbareStopp from './RedigerbareStopp';
 
 function Kartvisning({ stopp: initialStopp, dager }) {
   const kartRef = useRef(null);
+  const { id } = useParams();
+  const [stoppListe, setStoppListe] = useState(initialStopp || []);
+  const [nyStopp, setNyStopp] = useState('');
   const [dagsetapper, setDagsetapper] = useState(null);
   const [visLagre, setVisLagre] = useState(false);
   const [kart, setKart] = useState(null);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
-  const [nyStopp, setNyStopp] = useState('');
-  const [stoppListe, setStoppListe] = useState(initialStopp || []);
-  const navigate = useNavigate();
-  const { id } = useParams();
 
-  // Initialiser Google Maps
   useEffect(() => {
     if (!window.google || stoppListe.length < 2) return;
 
@@ -29,11 +27,8 @@ function Kartvisning({ stopp: initialStopp, dager }) {
     setDirectionsRenderer(renderer);
   }, [stoppListe]);
 
-  // Kjør rute når kartet og renderer er klare
   useEffect(() => {
-    if (kart && directionsRenderer) {
-      oppdaterRute();
-    }
+    if (kart && directionsRenderer) oppdaterRute();
   }, [kart, directionsRenderer]);
 
   const oppdaterRute = () => {
@@ -99,10 +94,7 @@ function Kartvisning({ stopp: initialStopp, dager }) {
 
   return (
     <div>
-      <div
-        ref={kartRef}
-        style={{ width: '100%', height: '400px', marginTop: '20px' }}
-      />
+      <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
 
       <RedigerbareStopp
         stoppListe={stoppListe}
