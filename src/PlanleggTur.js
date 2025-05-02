@@ -9,7 +9,6 @@ function PlanleggTur() {
   const [start, setStart] = useState('');
   const [slutt, setSlutt] = useState('');
   const [dager, setDager] = useState('');
-  const [stoppListe, setStoppListe] = useState([]);
   const [visKart, setVisKart] = useState(false);
   const [redigerer, setRedigerer] = useState(false);
   const [turRetur, setTurRetur] = useState(false);
@@ -19,27 +18,17 @@ function PlanleggTur() {
     const funnetTur = lagredeTurer.find((t) => t.id === id);
     setTur(funnetTur);
 
-    if (funnetTur?.reiserute) {
-      setStart(funnetTur.reiserute.start || '');
-      setSlutt(funnetTur.reiserute.slutt || '');
-      setDager(funnetTur.reiserute.dager || '');
-      setTurRetur(funnetTur.reiserute.turRetur || false);
-      setStoppListe(funnetTur.reiserute.stopp || []);
+    if (funnetTur?.reiserute?.turRetur) {
+      setTurRetur(true);
+    }
+
+    if (funnetTur?.reiserute && !redigerer) {
+      setStart(funnetTur.reiserute.start);
+      setSlutt(funnetTur.reiserute.slutt);
+      setDager(funnetTur.reiserute.dager);
       setVisKart(true);
     }
-  }, [id]);
-
-  useEffect(() => {
-    // Oppdater stoppListe automatisk når start/slutt eller turRetur endres
-    const stopp = [];
-    if (start) stopp.push(start);
-    if (turRetur && slutt) {
-      stopp.push(slutt, start);
-    } else if (slutt) {
-      stopp.push(slutt);
-    }
-    setStoppListe(stopp);
-  }, [start, slutt, turRetur]);
+  }, []);
 
   const håndterPlanlegg = (e) => {
     e.preventDefault();
@@ -96,7 +85,7 @@ function PlanleggTur() {
 
       {visKart && (
         <Kartvisning
-          stopp={stoppListe}
+          stopp={turRetur ? [start, slutt, start] : [start, slutt]}
           dager={parseInt(dager)}
         />
       )}
