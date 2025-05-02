@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import RedigerbareStopp from './RedigerbareStopp';
 
 function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
   const kartRef = useRef(null);
@@ -7,7 +8,7 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
   const [visLagre, setVisLagre] = useState(false);
   const [kart, setKart] = useState(null);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
-  const [stopp, setStopp] = useState('');
+  const [nyStopp, setNyStopp] = useState('');
   const [stoppListe, setStoppListe] = useState(initialStopp || []);
   const navigate = useNavigate();
   const { id } = useParams();
@@ -15,14 +16,6 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
   if (!start || !slutt || !dager) {
     return <p>Mangler data for å vise kart.</p>;
   }
-
-  console.log('📦 Kartkomponent lastet. Data:', {
-    start,
-    slutt,
-    dager,
-    stoppListe,
-    turRetur,
-  });
 
   useEffect(() => {
     if (!window.google || !start || !slutt || !dager) return;
@@ -56,7 +49,6 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
 
     let reellStoppListe = [...stoppListe];
     if (turRetur) {
-      // Sluttpunktet skal være første stopp, vi returnerer til start
       reellStoppListe = [slutt, ...stoppListe];
     }
 
@@ -114,37 +106,16 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
     }
   };
 
-  const leggTilStopp = () => {
-    if (stopp.trim() !== '') {
-      setStoppListe([...stoppListe, stopp]);
-      setStopp('');
-    }
-  };
-
   return (
     <div>
       <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
 
-      <div style={{ marginTop: '20px' }}>
-        <input
-          type="text"
-          placeholder="Legg til mellomstopp"
-          value={stopp}
-          onChange={(e) => setStopp(e.target.value)}
-        />
-        <button onClick={leggTilStopp}>➕ Legg til stopp</button>
-      </div>
-
-      {stoppListe.length > 0 && (
-        <div style={{ marginTop: '10px' }}>
-          <h4>Mellomstopp:</h4>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {stoppListe.map((sted, idx) => (
-              <li key={idx}>📍 {sted}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <RedigerbareStopp
+        stoppListe={stoppListe}
+        setStoppListe={setStoppListe}
+        nyStopp={nyStopp}
+        setNyStopp={setNyStopp}
+      />
 
       <div style={{ marginTop: '20px' }}>
         <button onClick={oppdaterRute}>🔄 Oppdater reiserute</button>
