@@ -27,7 +27,6 @@ function Kartvisning({ stopp: initialStopp, dager }) {
     setDirectionsRenderer(renderer);
   }, [stoppListe]);
 
-  // 🔁 Kjør rute når kart og renderer er klar
   useEffect(() => {
     if (kart && directionsRenderer) oppdaterRute();
   }, [kart, directionsRenderer]);
