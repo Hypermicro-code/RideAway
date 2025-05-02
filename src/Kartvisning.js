@@ -11,6 +11,10 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp }){
   const [stoppListe, setStoppListe] = useState(initialStopp || []);
   const navigate = useNavigate();
   const { id } = useParams();
+  
+  if (!start || !slutt || !dager) {
+  return <p>Mangler data for å vise kart.</p>;
+}
 
    console.log("📦 Kartkomponent lastet. Data:", {
   start,
@@ -155,9 +159,6 @@ const oppdaterRute = () => {
       setStopp('');
     }
   };
-if (!start || !slutt || !dager) {
-  return <p>Mangler data for å vise kart.</p>;
-}
   return (
     <div>
       <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
