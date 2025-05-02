@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import RedigerbareStopp from './RedigerbareStopp';
 
-function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
+function Kartvisning({ stopp: initialStopp, dager }) {
   const kartRef = useRef(null);
   const [dagsetapper, setDagsetapper] = useState(null);
   const [visLagre, setVisLagre] = useState(false);
@@ -13,73 +13,42 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  if (!start || !slutt || !dager) {
-    return <p>Mangler data for å vise kart.</p>;
-  }
-
-  useEffect(() => {
-    if (!window.google || !start || !slutt || !dager) return;
-
-    const nyttKart = new window.google.maps.Map(kartRef.current, {
-      zoom: 6,
-      center: { lat: 60.472, lng: 8.4689 },
-    });
-
-    const renderer = new window.google.maps.DirectionsRenderer();
-    renderer.setMap(nyttKart);
-
-    setKart(nyttKart);
-    setDirectionsRenderer(renderer);
-  }, [start, slutt, dager]);
-
-  useEffect(() => {
-    if (kart && directionsRenderer) {
-      oppdaterRute();
-    }
-  }, [kart, directionsRenderer]);
-
   const oppdaterRute = () => {
     const dagerInt = parseInt(dager);
-    if (!start || !slutt || isNaN(dagerInt)) {
-      alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.');
+    if (stoppListe.length < 2 || isNaN(dagerInt)) {
+      alert('Du må ha minst 2 stopp og gyldig antall dager.');
       return;
     }
 
+    const origin = stoppListe[0];
+    const destination = stoppListe[stoppListe.length - 1];
+    const mellomstopp = stoppListe.slice(1, -1);
+
     const directionsService = new window.google.maps.DirectionsService();
-
-    let reellStoppListe = [...stoppListe];
-    if (turRetur) {
-      reellStoppListe = [slutt, ...stoppListe];
-    }
-
-    const waypoints = reellStoppListe.map((sted) => ({
+    const waypoints = mellomstopp.map((sted) => ({
       location: sted,
       stopover: true,
     }));
 
     directionsService.route(
       {
-        origin: start,
-        destination: turRetur ? start : slutt,
-        waypoints: waypoints,
-        optimizeWaypoints: false,
+        origin,
+        destination,
+        waypoints,
         travelMode: window.google.maps.TravelMode.DRIVING,
       },
       (response, status) => {
         if (status === 'OK') {
           directionsRenderer.setDirections(response);
-
           const totalSekunder = response.routes[0].legs.reduce(
             (sum, leg) => sum + leg.duration.value,
             0
           );
-          const timerTotal = totalSekunder / 3600;
-          const timerPerDag = timerTotal / dagerInt;
+          const timerPerDag = totalSekunder / 3600 / dagerInt;
 
           const forslag = Array.from({ length: dagerInt }, (_, i) =>
             `Dag ${i + 1}: Kjør ca. ${timerPerDag.toFixed(1)} timer`
           );
-
           setDagsetapper(forslag);
           setVisLagre(true);
         } else {
@@ -94,17 +63,30 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
     const index = turer.findIndex((t) => t.id === id);
     if (index !== -1) {
       turer[index].reiserute = {
-        start,
-        slutt,
-        dager,
         stopp: stoppListe,
+        dager,
         dagsetapper,
-        turRetur,
       };
       localStorage.setItem('turer', JSON.stringify(turer));
       alert('Reiseruten ble lagret!');
     }
   };
+
+  useEffect(() => {
+    if (!window.google || stoppListe.length < 2) return;
+    const nyttKart = new window.google.maps.Map(kartRef.current, {
+      zoom: 6,
+      center: { lat: 60.472, lng: 8.4689 },
+    });
+    const renderer = new window.google.maps.DirectionsRenderer();
+    renderer.setMap(nyttKart);
+    setKart(nyttKart);
+    setDirectionsRenderer(renderer);
+  }, []);
+
+  useEffect(() => {
+    if (kart && directionsRenderer) oppdaterRute();
+  }, [kart, directionsRenderer]);
 
   return (
     <div>
