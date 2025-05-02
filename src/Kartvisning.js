@@ -45,58 +45,57 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
     }
   }, [kart, directionsRenderer]);
 
-const oppdaterRute = () => {
-  const dagerInt = parseInt(dager);
-  if (!start || !slutt || isNaN(dagerInt)) {
-    alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.');
-    return;
-  }
-
-  const directionsService = new window.google.maps.DirectionsService();
-
-  let reellStoppListe = [...stoppListe];
-
-  if (turRetur) {
-    // Vi returnerer til start, så sluttpunktet må inn som første stopp
-    reellStoppListe = [slutt, ...stoppListe];
-  }
-
-  const waypoints = reellStoppListe.map((sted) => ({
-    location: sted,
-    stopover: true,
-  }));
-
-  directionsService.route(
-    {
-      origin: start,
-      destination: turRetur ? start : slutt,
-      waypoints: waypoints,
-      travelMode: window.google.maps.TravelMode.DRIVING,
-    },
-    (response, status) => {
-      if (status === 'OK') {
-        directionsRenderer.setDirections(response);
-
-        const totalSekunder = response.routes[0].legs.reduce(
-          (sum, leg) => sum + leg.duration.value,
-          0
-        );
-        const timerTotal = totalSekunder / 3600;
-        const timerPerDag = timerTotal / dagerInt;
-
-        const forslag = Array.from({ length: dagerInt }, (_, i) =>
-          `Dag ${i + 1}: Kjør ca. ${timerPerDag.toFixed(1)} timer`
-        );
-
-        setDagsetapper(forslag);
-        setVisLagre(true);
-      } else {
-        alert('Fant ikke rute: ' + status);
-      }
+  const oppdaterRute = () => {
+    const dagerInt = parseInt(dager);
+    if (!start || !slutt || isNaN(dagerInt)) {
+      alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.');
+      return;
     }
-  );
-};
 
+    const directionsService = new window.google.maps.DirectionsService();
+
+    let reellStoppListe = [...stoppListe];
+    if (turRetur) {
+      // Sluttpunktet skal være første stopp, vi returnerer til start
+      reellStoppListe = [slutt, ...stoppListe];
+    }
+
+    const waypoints = reellStoppListe.map((sted) => ({
+      location: sted,
+      stopover: true,
+    }));
+
+    directionsService.route(
+      {
+        origin: start,
+        destination: turRetur ? start : slutt,
+        waypoints: waypoints,
+        optimizeWaypoints: false,
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === 'OK') {
+          directionsRenderer.setDirections(response);
+
+          const totalSekunder = response.routes[0].legs.reduce(
+            (sum, leg) => sum + leg.duration.value,
+            0
+          );
+          const timerTotal = totalSekunder / 3600;
+          const timerPerDag = timerTotal / dagerInt;
+
+          const forslag = Array.from({ length: dagerInt }, (_, i) =>
+            `Dag ${i + 1}: Kjør ca. ${timerPerDag.toFixed(1)} timer`
+          );
+
+          setDagsetapper(forslag);
+          setVisLagre(true);
+        } else {
+          alert('Fant ikke rute: ' + status);
+        }
+      }
+    );
+  };
 
   const lagreRute = () => {
     const turer = JSON.parse(localStorage.getItem('turer')) || [];
