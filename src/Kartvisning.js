@@ -5,6 +5,7 @@ import RedigerbareStopp from './RedigerbareStopp';
 function Kartvisning({ stopp: initialStopp, dager }) {
   const kartRef = useRef(null);
   const { id } = useParams();
+
   const [stoppListe, setStoppListe] = useState(initialStopp || []);
   const [nyStopp, setNyStopp] = useState('');
   const [dagsetapper, setDagsetapper] = useState(null);
@@ -12,8 +13,14 @@ function Kartvisning({ stopp: initialStopp, dager }) {
   const [kart, setKart] = useState(null);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
 
+  // 📦 Debug-logg
   useEffect(() => {
-    if (!window.google || stoppListe.length < 2) return;
+    console.log("📦 Kartvisning initialisert med:", { initialStopp, dager });
+  }, []);
+
+  // 🗺️ Opprett kart
+  useEffect(() => {
+    if (!window.google || !Array.isArray(stoppListe) || stoppListe.length < 2) return;
 
     const nyttKart = new window.google.maps.Map(kartRef.current, {
       zoom: 6,
@@ -27,6 +34,7 @@ function Kartvisning({ stopp: initialStopp, dager }) {
     setDirectionsRenderer(renderer);
   }, [stoppListe]);
 
+  // 🔁 Kjør rute når kart og renderer er klar
   useEffect(() => {
     if (kart && directionsRenderer) oppdaterRute();
   }, [kart, directionsRenderer]);
