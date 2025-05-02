@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-function Kartvisning({ start, slutt, dager, stopp: initialStopp }){
+function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
   const kartRef = useRef(null);
   const [dagsetapper, setDagsetapper] = useState(null);
   const [visLagre, setVisLagre] = useState(false);
@@ -11,100 +11,56 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp }){
   const [stoppListe, setStoppListe] = useState(initialStopp || []);
   const navigate = useNavigate();
   const { id } = useParams();
-  
+
   if (!start || !slutt || !dager) {
-  return <p>Mangler data for å vise kart.</p>;
-}
+    return <p>Mangler data for å vise kart.</p>;
+  }
 
-   console.log("📦 Kartkomponent lastet. Data:", {
-  start,
-  slutt,
-  dager,
-  stoppListe
-});
-
-useEffect(() => {
-  if (!window.google || !start || !slutt || !dager) return;
-
-  console.log("🗺️ Initialiserer kartet...");
-
-  const nyttKart = new window.google.maps.Map(kartRef.current, {
-    zoom: 6,
-    center: { lat: 60.472, lng: 8.4689 },
+  console.log('📦 Kartkomponent lastet. Data:', {
+    start,
+    slutt,
+    dager,
+    stoppListe,
+    turRetur,
   });
 
-  const renderer = new window.google.maps.DirectionsRenderer();
-  renderer.setMap(nyttKart);
+  useEffect(() => {
+    if (!window.google || !start || !slutt || !dager) return;
 
-  setKart(nyttKart);
-  setDirectionsRenderer(renderer);
-}, [start, slutt, dager]);
+    const nyttKart = new window.google.maps.Map(kartRef.current, {
+      zoom: 6,
+      center: { lat: 60.472, lng: 8.4689 },
+    });
 
+    const renderer = new window.google.maps.DirectionsRenderer();
+    renderer.setMap(nyttKart);
 
-  // 🚀 Automatisk kjør rute når kart og renderer er klar
+    setKart(nyttKart);
+    setDirectionsRenderer(renderer);
+  }, [start, slutt, dager]);
+
   useEffect(() => {
     if (kart && directionsRenderer) {
       oppdaterRute();
     }
   }, [kart, directionsRenderer]);
 
-const oppdaterRute = () => {
-  const dagerInt = parseInt(dager);
-  if (!start || !slutt || isNaN(dagerInt)) {
-    alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.');
-    return;
-  }
-
-  const directionsService = new window.google.maps.DirectionsService();
-
-  // Hvis tur/retur er aktivt, legg til slutt og deretter start som siste stopp
-  const reellStoppListe = [...stoppListe];
-
-  if (turRetur) {
-    if (!reellStoppListe.includes(slutt)) reellStoppListe.push(slutt);
-    if (!reellStoppListe.includes(start)) reellStoppListe.push(start);
-  }
-
-  const waypoints = reellStoppListe.map((sted) => ({
-    location: sted,
-    stopover: true,
-  }));
-
-  directionsService.route(
-    {
-      origin: start,
-      destination: turRetur ? start : slutt,
-      waypoints: waypoints,
-      travelMode: window.google.maps.TravelMode.DRIVING,
-    },
-    (response, status) => {
-      if (status === 'OK') {
-        directionsRenderer.setDirections(response);
-
-        const totalSekunder = response.routes[0].legs.reduce(
-          (sum, leg) => sum + leg.duration.value,
-          0
-        );
-        const timerTotal = totalSekunder / 3600;
-        const timerPerDag = timerTotal / dagerInt;
-
-        const forslag = Array.from({ length: dagerInt }, (_, i) =>
-          `Dag ${i + 1}: Kjør ca. ${timerPerDag.toFixed(1)} timer`
-        );
-
-        setDagsetapper(forslag);
-        setVisLagre(true);
-      } else {
-        alert('Fant ikke rute: ' + status);
-      }
+  const oppdaterRute = () => {
+    const dagerInt = parseInt(dager);
+    if (!start || !slutt || isNaN(dagerInt)) {
+      alert('Startsted, endepunkt eller antall dager mangler eller er ugyldig.');
+      return;
     }
-  );
-};
-
 
     const directionsService = new window.google.maps.DirectionsService();
 
-    const waypoints = stoppListe.map((sted) => ({
+    const reellStoppListe = [...stoppListe];
+    if (turRetur) {
+      if (!reellStoppListe.includes(slutt)) reellStoppListe.push(slutt);
+      if (!reellStoppListe.includes(start)) reellStoppListe.push(start);
+    }
+
+    const waypoints = reellStoppListe.map((sted) => ({
       location: sted,
       stopover: true,
     }));
@@ -112,7 +68,7 @@ const oppdaterRute = () => {
     directionsService.route(
       {
         origin: start,
-        destination: slutt,
+        destination: turRetur ? start : slutt,
         waypoints: waypoints,
         travelMode: window.google.maps.TravelMode.DRIVING,
       },
@@ -120,7 +76,10 @@ const oppdaterRute = () => {
         if (status === 'OK') {
           directionsRenderer.setDirections(response);
 
-          const totalSekunder = response.routes[0].legs.reduce((sum, leg) => sum + leg.duration.value, 0);
+          const totalSekunder = response.routes[0].legs.reduce(
+            (sum, leg) => sum + leg.duration.value,
+            0
+          );
           const timerTotal = totalSekunder / 3600;
           const timerPerDag = timerTotal / dagerInt;
 
@@ -147,6 +106,7 @@ const oppdaterRute = () => {
         dager,
         stopp: stoppListe,
         dagsetapper,
+        turRetur,
       };
       localStorage.setItem('turer', JSON.stringify(turer));
       alert('Reiseruten ble lagret!');
@@ -157,10 +117,10 @@ const oppdaterRute = () => {
     if (stopp.trim() !== '') {
       setStoppListe([...stoppListe, stopp]);
       setStopp('');
-      return (
     }
   };
-  
+
+  return (
     <div>
       <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
 
