@@ -11,19 +11,23 @@ function PlanleggTur() {
   useEffect(() => {
     const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
     const funnetTur = lagredeTurer.find((t) => t.id === id);
-    setTur(funnetTur);
-    if (funnetTur?.reiserute) {
+    if (funnetTur) {
+      setTur(funnetTur);
       setVisKart(true);
     }
   }, [id]);
 
-  const håndterPlanlegg = () => {
-    setVisKart(true);
-  };
-
   if (!tur) {
     return <p style={{ textAlign: 'center', marginTop: '30px' }}>Turen ble ikke funnet.</p>;
   }
+
+  // 🚨 Sørg for at vi alltid har minst 2 stopp
+  const stopp =
+    tur.reiserute?.stopp?.length >= 2
+      ? tur.reiserute.stopp
+      : [tur.startsted, tur.sluttsted].filter(Boolean);
+
+  const dager = parseInt(tur.reiserute?.dager || tur.dager || 1);
 
   return (
     <div style={{ textAlign: 'center', marginTop: '30px' }}>
@@ -33,20 +37,14 @@ function PlanleggTur() {
 
       <h2>Reiserute</h2>
 
-      {!tur.reiserute ? (
-        <div style={{ marginTop: '20px' }}>
-          <button onClick={håndterPlanlegg}>🛠️ Planlegg reiserute</button>
-        </div>
-      ) : (
-        <div style={{ marginTop: '20px' }}>
-          <button onClick={() => setVisKart(true)}>✏️ Rediger reiserute</button>
-        </div>
-      )}
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={() => setVisKart(true)}>🛠️ {tur.reiserute ? 'Rediger' : 'Planlegg'} reiserute</button>
+      </div>
 
       {visKart && (
         <Kartvisning
-          stopp={tur.reiserute?.stopp || [tur.startsted, tur.sluttsted]}
-          dager={parseInt(tur.reiserute?.dager || tur.dager || 1)}
+          stopp={stopp}
+          dager={dager}
         />
       )}
 
