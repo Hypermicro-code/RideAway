@@ -2,6 +2,7 @@ import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function RedigerbareStopp({ stoppListe, setStoppListe, nyStopp, setNyStopp }) {
+  // 📦 Håndterer dra og slipp
   const håndterDra = (result) => {
     if (!result.destination) return;
     const kopi = Array.from(stoppListe);
@@ -10,13 +11,16 @@ function RedigerbareStopp({ stoppListe, setStoppListe, nyStopp, setNyStopp }) {
     setStoppListe(kopi);
   };
 
+  // ➕ Legg til nytt stopp
   const leggTilStopp = () => {
-    if (nyStopp.trim() !== '') {
-      setStoppListe([...stoppListe, nyStopp.trim()]);
+    const trimmed = nyStopp.trim();
+    if (trimmed !== '') {
+      setStoppListe([...stoppListe, trimmed]);
       setNyStopp('');
     }
   };
 
+  // ❌ Slett stopp fra liste
   const slettStopp = (indeks) => {
     const kopi = [...stoppListe];
     kopi.splice(indeks, 1);
@@ -27,13 +31,16 @@ function RedigerbareStopp({ stoppListe, setStoppListe, nyStopp, setNyStopp }) {
     <div style={{ marginTop: '20px' }}>
       <h4>🗺️ Rediger rekkefølge på stopp:</h4>
 
-      <input
-        type="text"
-        placeholder="Nytt sted"
-        value={nyStopp}
-        onChange={(e) => setNyStopp(e.target.value)}
-      />
-      <button onClick={leggTilStopp}>➕</button>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <input
+          type="text"
+          placeholder="Nytt sted"
+          value={nyStopp}
+          onChange={(e) => setNyStopp(e.target.value)}
+          style={{ flexGrow: 1 }}
+        />
+        <button onClick={leggTilStopp}>➕</button>
+      </div>
 
       <DragDropContext onDragEnd={håndterDra}>
         <Droppable droppableId="stoppListe">
@@ -44,7 +51,7 @@ function RedigerbareStopp({ stoppListe, setStoppListe, nyStopp, setNyStopp }) {
               style={{ listStyle: 'none', padding: 0, marginTop: '10px' }}
             >
               {stoppListe.map((sted, index) => (
-                <Draggable key={sted + index} draggableId={sted + index} index={index}>
+                <Draggable key={`${sted}-${index}`} draggableId={`${sted}-${index}`} index={index}>
                   {(provided) => (
                     <li
                       ref={provided.innerRef}
