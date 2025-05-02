@@ -6,32 +6,18 @@ function PlanleggTur() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [tur, setTur] = useState(null);
-  const [start, setStart] = useState('');
-  const [slutt, setSlutt] = useState('');
-  const [dager, setDager] = useState('');
   const [visKart, setVisKart] = useState(false);
-  const [redigerer, setRedigerer] = useState(false);
-  const [turRetur, setTurRetur] = useState(false);
 
   useEffect(() => {
     const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
     const funnetTur = lagredeTurer.find((t) => t.id === id);
     setTur(funnetTur);
-
-    if (funnetTur?.reiserute?.turRetur) {
-      setTurRetur(true);
-    }
-
-    if (funnetTur?.reiserute && !redigerer) {
-      setStart(funnetTur.reiserute.start);
-      setSlutt(funnetTur.reiserute.slutt);
-      setDager(funnetTur.reiserute.dager);
+    if (funnetTur?.reiserute) {
       setVisKart(true);
     }
-  }, []);
+  }, [id]);
 
-  const håndterPlanlegg = (e) => {
-    e.preventDefault();
+  const håndterPlanlegg = () => {
     setVisKart(true);
   };
 
@@ -45,48 +31,22 @@ function PlanleggTur() {
       <p>{tur.startdato} – {tur.sluttdato}</p>
       <p><em>{tur.beskrivelse}</em></p>
 
-      <h2>{redigerer ? 'Rediger reiserute' : 'Reiserute'}</h2>
+      <h2>Reiserute</h2>
 
-      {!tur.reiserute || redigerer ? (
-        <form onSubmit={håndterPlanlegg}>
-          <input
-            type="text"
-            placeholder="Startsted"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-          /><br />
-          <input
-            type="text"
-            placeholder="Endepunkt"
-            value={slutt}
-            onChange={(e) => setSlutt(e.target.value)}
-          /><br />
-          <input
-            type="number"
-            placeholder="Antall dager"
-            value={dager}
-            onChange={(e) => setDager(e.target.value)}
-          /><br />
-          <label style={{ display: 'block', marginTop: '10px' }}>
-            <input
-              type="checkbox"
-              checked={turRetur}
-              onChange={(e) => setTurRetur(e.target.checked)}
-            />{' '}
-            Planlegg som tur/retur
-          </label>
-          <button type="submit" style={{ marginTop: '10px' }}>Planlegg reiserute</button>
-        </form>
+      {!tur.reiserute ? (
+        <div style={{ marginTop: '20px' }}>
+          <button onClick={håndterPlanlegg}>🛠️ Planlegg reiserute</button>
+        </div>
       ) : (
         <div style={{ marginTop: '20px' }}>
-          <button onClick={() => setRedigerer(true)}>✏️ Rediger reiserute</button>
+          <button onClick={() => setVisKart(true)}>✏️ Rediger reiserute</button>
         </div>
       )}
 
       {visKart && (
         <Kartvisning
-          stopp={turRetur ? [start, slutt, start] : [start, slutt]}
-          dager={parseInt(dager)}
+          stopp={tur.reiserute?.stopp || [tur.startsted, tur.sluttsted]}
+          dager={parseInt(tur.reiserute?.dager || tur.dager || 1)}
         />
       )}
 
