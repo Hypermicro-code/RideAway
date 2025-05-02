@@ -13,6 +13,29 @@ function Kartvisning({ stopp: initialStopp, dager }) {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // Initialiser Google Maps
+  useEffect(() => {
+    if (!window.google || stoppListe.length < 2) return;
+
+    const nyttKart = new window.google.maps.Map(kartRef.current, {
+      zoom: 6,
+      center: { lat: 60.472, lng: 8.4689 },
+    });
+
+    const renderer = new window.google.maps.DirectionsRenderer();
+    renderer.setMap(nyttKart);
+
+    setKart(nyttKart);
+    setDirectionsRenderer(renderer);
+  }, [stoppListe]);
+
+  // Kjør rute når kartet og renderer er klare
+  useEffect(() => {
+    if (kart && directionsRenderer) {
+      oppdaterRute();
+    }
+  }, [kart, directionsRenderer]);
+
   const oppdaterRute = () => {
     const dagerInt = parseInt(dager);
     if (stoppListe.length < 2 || isNaN(dagerInt)) {
@@ -40,6 +63,7 @@ function Kartvisning({ stopp: initialStopp, dager }) {
       (response, status) => {
         if (status === 'OK') {
           directionsRenderer.setDirections(response);
+
           const totalSekunder = response.routes[0].legs.reduce(
             (sum, leg) => sum + leg.duration.value,
             0
@@ -49,6 +73,7 @@ function Kartvisning({ stopp: initialStopp, dager }) {
           const forslag = Array.from({ length: dagerInt }, (_, i) =>
             `Dag ${i + 1}: Kjør ca. ${timerPerDag.toFixed(1)} timer`
           );
+
           setDagsetapper(forslag);
           setVisLagre(true);
         } else {
@@ -72,25 +97,12 @@ function Kartvisning({ stopp: initialStopp, dager }) {
     }
   };
 
-  useEffect(() => {
-    if (!window.google || stoppListe.length < 2) return;
-    const nyttKart = new window.google.maps.Map(kartRef.current, {
-      zoom: 6,
-      center: { lat: 60.472, lng: 8.4689 },
-    });
-    const renderer = new window.google.maps.DirectionsRenderer();
-    renderer.setMap(nyttKart);
-    setKart(nyttKart);
-    setDirectionsRenderer(renderer);
-  }, []);
-
-  useEffect(() => {
-    if (kart && directionsRenderer) oppdaterRute();
-  }, [kart, directionsRenderer]);
-
   return (
     <div>
-      <div ref={kartRef} style={{ width: '100%', height: '400px', marginTop: '20px' }} />
+      <div
+        ref={kartRef}
+        style={{ width: '100%', height: '400px', marginTop: '20px' }}
+      />
 
       <RedigerbareStopp
         stoppListe={stoppListe}
