@@ -54,10 +54,12 @@ function Kartvisning({ start, slutt, dager, stopp: initialStopp, turRetur }) {
 
     const directionsService = new window.google.maps.DirectionsService();
 
-    const reellStoppListe = [...stoppListe];
+    // Lag riktig stopp-liste
+    let reellStoppListe = [...stoppListe];
     if (turRetur) {
-      if (!reellStoppListe.includes(slutt)) reellStoppListe.push(slutt);
-      if (!reellStoppListe.includes(start)) reellStoppListe.push(start);
+      if (!reellStoppListe.includes(slutt)) {
+        reellStoppListe.unshift(slutt); // legg slutt først, slik at vi går via den før vi returnerer
+      }
     }
 
     const waypoints = reellStoppListe.map((sted) => ({
