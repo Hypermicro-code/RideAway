@@ -1,20 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function RedigerbareStopp({ stoppListe, setStoppListe, nyStopp, setNyStopp }) {
-  // Dra og slipp-håndtering
   const håndterDra = (result) => {
     if (!result.destination) return;
-
-    const oppdatert = Array.from(stoppListe);
-    const [flyttet] = oppdatert.splice(result.source.index, 1);
-    oppdatert.splice(result.destination.index, 0, flyttet);
-    setStoppListe(oppdatert);
+    const kopi = Array.from(stoppListe);
+    const [flyttet] = kopi.splice(result.source.index, 1);
+    kopi.splice(result.destination.index, 0, flyttet);
+    setStoppListe(kopi);
   };
 
   const leggTilStopp = () => {
     if (nyStopp.trim() !== '') {
-      setStoppListe([...stoppListe, nyStopp]);
+      setStoppListe([...stoppListe, nyStopp.trim()]);
       setNyStopp('');
     }
   };
@@ -27,10 +25,11 @@ function RedigerbareStopp({ stoppListe, setStoppListe, nyStopp, setNyStopp }) {
 
   return (
     <div style={{ marginTop: '20px' }}>
-      <h4>Stopp underveis:</h4>
+      <h4>🗺️ Rediger rekkefølge på stopp:</h4>
+
       <input
         type="text"
-        placeholder="Legg til sted"
+        placeholder="Nytt sted"
         value={nyStopp}
         onChange={(e) => setNyStopp(e.target.value)}
       />
@@ -52,9 +51,9 @@ function RedigerbareStopp({ stoppListe, setStoppListe, nyStopp, setNyStopp }) {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       style={{
+                        background: '#f0f0f0',
                         padding: '8px',
-                        marginBottom: '5px',
-                        backgroundColor: '#f0f0f0',
+                        marginBottom: '6px',
                         borderRadius: '4px',
                         display: 'flex',
                         justifyContent: 'space-between',
