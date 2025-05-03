@@ -22,7 +22,6 @@ function PlanleggTur() {
       setStart(funnetTur.reiserute.start);
       setSlutt(funnetTur.reiserute.slutt);
       setDager(funnetTur.reiserute.dager);
-      setTurRetur(funnetTur.reiserute.turRetur || false);
       if (!redigerer) {
         setVisKart(true);
       }
@@ -43,44 +42,6 @@ function PlanleggTur() {
       <h1>{tur.navn}</h1>
       <p>{tur.startdato} – {tur.sluttdato}</p>
       <p><em>{tur.beskrivelse}</em></p>
-
-      <h2>{redigerer ? 'Rediger reiserute' : 'Reiserute'}</h2>
-
-      {!tur.reiserute || redigerer ? (
-        <form onSubmit={håndterPlanlegg}>
-          <input
-            type="text"
-            placeholder="Startsted"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-          /><br />
-          <input
-            type="text"
-            placeholder="Endepunkt"
-            value={slutt}
-            onChange={(e) => setSlutt(e.target.value)}
-          /><br />
-          <input
-            type="number"
-            placeholder="Antall dager"
-            value={dager}
-            onChange={(e) => setDager(e.target.value)}
-          /><br />
-          <label style={{ display: 'block', marginTop: '10px' }}>
-            <input
-              type="checkbox"
-              checked={turRetur}
-              onChange={(e) => setTurRetur(e.target.checked)}
-            />{' '}
-            Planlegg som tur/retur
-          </label>
-          <button type="submit" style={{ marginTop: '10px' }}>Planlegg reiserute</button>
-        </form>
-      ) : (
-        <div style={{ marginTop: '20px' }}>
-          <button onClick={() => setRedigerer(true)}>✏️ Rediger reiserute</button>
-        </div>
-      )}
 
       {visKart && (
         <Kartvisning
