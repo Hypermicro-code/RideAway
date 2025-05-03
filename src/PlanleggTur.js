@@ -6,12 +6,8 @@ function PlanleggTur() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [tur, setTur] = useState(null);
-  const [start, setStart] = useState('');
-  const [slutt, setSlutt] = useState('');
   const [dager, setDager] = useState('');
   const [visKart, setVisKart] = useState(false);
-  const [redigerer, setRedigerer] = useState(false);
-  const [turRetur, setTurRetur] = useState(false);
 
   useEffect(() => {
     const lagredeTurer = JSON.parse(localStorage.getItem('turer')) || [];
