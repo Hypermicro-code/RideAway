@@ -15,12 +15,8 @@ function PlanleggTur() {
     setTur(funnetTur);
 
     if (funnetTur?.reiserute) {
-      setStart(funnetTur.reiserute.start);
-      setSlutt(funnetTur.reiserute.slutt);
+
       setDager(funnetTur.reiserute.dager);
-      if (!redigerer) {
-        setVisKart(true);
-      }
     }
   }, [id, redigerer]);
 
