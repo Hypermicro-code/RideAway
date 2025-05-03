@@ -129,14 +129,6 @@ function App() {
                 onChange={(e) => setSluttsted(e.target.value)}
                 required
               /><br />
-              <label style={{ display: 'block', marginTop: '10px' }}>
-                <input
-                  type="checkbox"
-                  checked={turRetur}
-                  onChange={(e) => setTurRetur(e.target.checked)}
-                />{' '}
-                Planlegg som tur/retur {/* 🏷️ i18n */}
-              </label>
               <button type="submit" style={{ marginTop: '10px' }}>
                 🚀 Opprett tur
               </button>
