@@ -32,7 +32,7 @@ function App() {
     const id = Date.now().toString();
     const dager = (slutt - start) / (1000 * 60 * 60 * 24) + 1;
 
-    const stoppListe = turRetur ? [startsted] : [];
+    const stoppListe = turRetur ? [startsted, sluttsted, startsted] : [startsted, sluttsted];
 
     const nyTur = {
       id,
@@ -130,13 +130,13 @@ function App() {
                 required
               /><br />
               <label style={{ display: 'block', marginTop: '10px' }}>
-              <input
-               type="checkbox"
-               checked={turRetur}
-               onChange={(e) => setTurRetur(e.target.checked)}
-               />{' '}
+                <input
+                  type="checkbox"
+                  checked={turRetur}
+                  onChange={(e) => setTurRetur(e.target.checked)}
+                />{' '}
                 Planlegg som tur/retur {/* 🏷️ i18n */}
-             </label>
+              </label>
               <button type="submit" style={{ marginTop: '10px' }}>
                 🚀 Opprett tur
               </button>
@@ -154,15 +154,11 @@ function App() {
       {turer.map((tur) => (
         <div key={tur.id} style={{ marginBottom: '15px' }}>
           <strong>{tur.navn}</strong> ({tur.startdato} – {tur.sluttdato})<br />
-          {tur.reiserute ? (
-            <Link to={`/planlegg/${tur.id}`}>
-              <button>📍 Vis reiserute</button> {/* 🏷️ i18n */}
-            </Link>
-          ) : (
-            <Link to={`/planlegg/${tur.id}`}>
-              <button>➕ Opprett reiserute</button> {/* 🏷️ i18n */}
-            </Link>
-          )}
+          <Link to={`/planlegg/${tur.id}`}>
+            <button>
+              {tur.reiserute ? '📍 Vis reiserute' : '➕ Opprett reiserute'} {/* 🏷️ i18n */}
+            </button>
+          </Link>
           <button onClick={() => slettTur(tur.id)} style={{ marginLeft: '10px' }}>
             🗑️ Slett
           </button> {/* 🏷️ i18n */}
@@ -173,4 +169,3 @@ function App() {
 }
 
 export default App;
-
