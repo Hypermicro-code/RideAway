@@ -10,7 +10,6 @@ function App() {
   const [beskrivelse, setBeskrivelse] = useState('');
   const [startsted, setStartsted] = useState('');
   const [sluttsted, setSluttsted] = useState('');
-  const [turRetur, setTurRetur] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +31,7 @@ function App() {
     const id = Date.now().toString();
     const dager = (slutt - start) / (1000 * 60 * 60 * 24) + 1;
 
-    const stoppListe = turRetur ? [startsted, sluttsted, startsted] : [startsted, sluttsted];
+    const stoppListe = [startsted, sluttsted];
 
     const nyTur = {
       id,
@@ -45,7 +44,6 @@ function App() {
         slutt: sluttsted,
         dager: Math.round(dager),
         stopp: stoppListe,
-        turRetur: turRetur,
       },
     };
 
