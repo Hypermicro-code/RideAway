@@ -15,15 +15,10 @@ function PlanleggTur() {
     setTur(funnetTur);
 
     if (funnetTur?.reiserute) {
-
       setDager(funnetTur.reiserute.dager);
+      setVisKart(true);
     }
-  }, [id, redigerer]);
-
-  const håndterPlanlegg = (e) => {
-    e.preventDefault();
-    setVisKart(true);
-  };
+  }, [id]);
 
   if (!tur) {
     return <p style={{ textAlign: 'center', marginTop: '30px' }}>Turen ble ikke funnet.</p>;
@@ -35,9 +30,11 @@ function PlanleggTur() {
       <p>{tur.startdato} – {tur.sluttdato}</p>
       <p><em>{tur.beskrivelse}</em></p>
 
+      <h2>Reiserute</h2>
+
       {visKart && (
         <Kartvisning
-          stopp={turRetur ? [start, slutt, start] : [start, slutt]}
+          stopp={tur.reiserute.stopp || []}
           dager={parseInt(dager)}
         />
       )}
